@@ -6,6 +6,7 @@ var cookieParser = require('cookie-parser');
 var session=require('express-session');
 
 var Twitter = require("node-twitter-api");
+var _requestSecret;
 
     var twitter = new Twitter({
         consumerKey: "l0Q11C3VqtdLze9jQCHhQiX4V",
