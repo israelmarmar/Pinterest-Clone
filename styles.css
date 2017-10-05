@@ -141,7 +141,7 @@ label {
 display: block;
 float:right;
 padding-left: 20px;
-margin-top:-14px;
+    margin-top: -20px!important;
 cursor:pointer;
 }
 

@@ -47,6 +47,11 @@ if(document.cookie && getCookie("user")!=="undefined"){
 
 var Container = React.createClass({
 
+  submit: function(){
+
+    window.location.href="/request-token";
+  },
+
 
   render: function () {
 
@@ -55,7 +60,7 @@ var Container = React.createClass({
              <img className="icoheader" src="picasa_21755.png" width="50" height="50" />
                 <div id="btnsnav">
                 {() => {
-                return(<div className="btnnav" onClick={this.change} id="signup">Sign up</div>)
+                return(<div className="btn btn-default navbar-btn btnnav" onClick={this.submit} id="signup">Sign up</div>)
                 }()}
                 </div>
 

@@ -37,12 +37,6 @@ app.get('/logout', function (req, res) {
     res.redirect("/");
 });
 
-
-app.get('/:any', function (req, res) {
-  res.cookie("user",JSON.stringify(req.session.user));
-    res.sendFile("/main.html",{root: __dirname});
-});
-
 app.listen(port, function () {
  console.log("ligado");
 });
