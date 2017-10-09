@@ -60,7 +60,10 @@ var Container = React.createClass({
              <img className="icoheader" src="picasa_21755.png" width="50" height="50" />
              {() => {
                 if(user)
-                  return(<div className="btnnav">All</div>)
+                  return(
+                    <div className="btnsnav">
+                    <div className="btnnav">All</div>
+                    )
 
               }()}
                 <div id="btnsnav">
