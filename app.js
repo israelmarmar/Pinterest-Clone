@@ -126,6 +126,7 @@ var Container = React.createClass({
                     )
                 }()}
 
+                {() => {
                 if(user)
                   return(
                     <div className="btnnav">Add Pic▾</div>
