@@ -76,7 +76,7 @@ var Photos= React.createClass({
       {this.state.data.map(function(item) {
 
           return (<div className='grid'>
-          <a href="#"><img src={item.img} className="image"/></a>
+          <a href="#"><img src={item.img} className="grid-item"/></a>
           </div>)
       })}
       </div>)
@@ -143,6 +143,11 @@ var Container = React.createClass({
         </div>)
 
 }
+});
+
+$('.grid').masonry({
+  itemSelector: '.grid-item',
+  columnWidth: 160
 });
 
 
