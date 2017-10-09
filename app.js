@@ -145,11 +145,12 @@ var Container = React.createClass({
 }
 });
 
+$(function() {
 $('.grid').masonry({
   itemSelector: '.grid-item',
   columnWidth: 160
 });
-
+});
 
 
 ReactDOM.render(<Container />, document.getElementById('cont'));
