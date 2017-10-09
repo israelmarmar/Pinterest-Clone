@@ -44,6 +44,45 @@ if(document.cookie && getCookie("user")!=="undefined"){
   console.log(username);
   }
 
+var Photos= React.createClass({
+
+  getInitialState: function () {
+    return { 
+            data:[]
+
+           };
+  },
+  
+   componentDidMount: function() {
+   
+  var th = this;
+    this.serverRequest = 
+      axios.get("/photos")
+     
+        .then(function(result) {    
+      
+          th.setState({
+            data: result.data,
+ 
+          });
+      
+        })
+     
+     
+  },
+
+  render: function () {
+    return (<div>
+      {this.state.data.map(function(item) {
+
+          return (<div className='grid'>
+          <a href={item.url}><img src={item.image_url} className="image"/></a>
+          </div>)
+      })}
+      </div>)
+  }
+
+});
 
 var Container = React.createClass({
 
@@ -78,10 +117,27 @@ var Container = React.createClass({
                     <div className="btnnav">All</div>
                     )
                 }()}
+
+                {() => {
+
+                if(user)
+                  return(
+                    <div className="btnnav">My Pics</div>
+                    )
+                }()}
+
+                if(user)
+                  return(
+                    <div className="btnnav">Add Pic▾</div>
+                    )
+                }()}
+
+
                 </div>
 
              </div>
              <div className="page">
+             <Photos />
              </div>
         </div>)
 
