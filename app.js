@@ -63,6 +63,7 @@ var Container = React.createClass({
                   return(
                     <div className="btnsnav">
                     <div className="btnnav">All</div>
+                    </div>
                     )
 
               }()}
