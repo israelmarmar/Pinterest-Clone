@@ -59,20 +59,24 @@ var Container = React.createClass({
              <div className="navbar">
              <img className="icoheader" src="picasa_21755.png" width="50" height="50" />
              {() => {
-                if(user)
-                  return(
-                    <div className="btnsnav">
-                    <div className="btnnav">All</div>
-                    </div>
-                    )
-
+                
               }()}
+
                 <div id="btnsnav">
                 {() => {
+
                   if(!user)
                 return(<div className="btn btn-default navbar-btn btnnav" onClick={this.submit} id="signup">Sign up</div>)
                   else
                     return(<div className="btn btn-default navbar-btn btnnav" onClick={this.logout} id="signup">Sign Out</div>)
+                }()}
+
+                {() => {
+
+                if(user)
+                  return(
+                    <div className="btnnav">All</div>
+                    )
                 }()}
                 </div>
 
