@@ -255,10 +255,9 @@ input, button {
 .grid-item--height3 { height: 260px; }
 .grid-item--height4 { height: 360px; }
 
-.like{
+.glyphicon {
       position: relative;
-    top: 97%;
-    left: 25%;
+    top: 0px;
 }
 
 }
