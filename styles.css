@@ -220,9 +220,8 @@ input, button {
 }
 
 .glyphicon {
-    position:absolute;
-    top:-240px!important;
-    left:120px;
+        top: 97%!important;
+    left: 20%!important;
 }
 
 .grid {
@@ -255,9 +254,6 @@ input, button {
 .grid-item--height3 { height: 260px; }
 .grid-item--height4 { height: 360px; }
 
-.glyphicon {
-      position: relative;
-    top: 0px;
-}
+
 
 }
