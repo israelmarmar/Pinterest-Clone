@@ -4,7 +4,7 @@ var port = process.env.PORT || 3000;
 var urldb =process.env.MONGOLAB_URI2;
 var mongodb= require("mongodb");
 var MongoClient = mongodb.MongoClient;
-
+var ObjectID = mongodb.ObjectID;
 var cookieParser = require('cookie-parser');
 var session=require('express-session');
 
@@ -96,8 +96,39 @@ app.get("/photos",function(req,res){
 
   db.collection("pinterest").find().toArray(function(err, result) {
     if (err) throw err;
-    
+    result.likes=result.likes.length;
     res.json(result);
   });
+
+});
+
+
+app.get("/like",function(req,res){
+var resp=res;
+
+  if(req.session.user){
+  db.collection("pinterest").findOne({_id: new ObjectId(req.query.id)}, function(err, doc) {
+    if (err) throw err;
+
+    for(var i=0;i<doc.likes.length;i++){
+      if(doc.likes[i].user==req.session.user.screen_name){
+        delete doc.likes[i];
+        break;
+        }
+
+        if(i==doc.likes.length-1)
+        doc.likes.push({user: req.session.user.screen_name});
+      }
+
+        db.collection("piterest").updateOne(new ObjectId(req.query.id), doc,  function(err, res) {
+        if (err) throw err;
+        resp.json({likes:doc.likes.length});
+        });
+    
+  });
+
+  }else{
+    resp.json({msg:"permission denied"});
+  }
 
 });
