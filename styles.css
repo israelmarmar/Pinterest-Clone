@@ -238,12 +238,15 @@ input, button {
 /* ---- grid-item ---- */
 
 .grid-item {
-  display:none;
   width: 160px;
   height: 120px;
   float: left;
   border-radius: 5px;
   z-index:97;
+}
+
+.like{
+  display:none;
 }
 
 .grid-item--width2 { width: 320px; }
