@@ -96,7 +96,7 @@ app.get("/photos",function(req,res){
 
   db.collection("pinterest").find().toArray(function(err, result) {
     if (err) throw err;
-    result.likes=result.likes.length;
+    //result.likes=result.likes.length;
     res.json(result);
   });
 
