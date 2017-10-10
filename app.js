@@ -151,6 +151,14 @@ var Container = React.createClass({
 
 $(function() {
 console.log("oi");
+
+
+$('.grid-item').mouseover(function() {
+
+$('.grid-item').children().css( "display", "block" );
+
+});
+
 $('.grid').masonry({
   itemSelector: '.grid-item',
   columnWidth: 160
