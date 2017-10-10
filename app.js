@@ -145,10 +145,12 @@ var Container = React.createClass({
 });
 
 $(function() {
+console.log("oi");
 $('.grid').masonry({
   itemSelector: '.grid-item',
   columnWidth: 160
 });
+
 });
 
 
