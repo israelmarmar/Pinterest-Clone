@@ -246,7 +246,7 @@ input, button {
 }
 
 .like{
-  display:none;
+  display:none!important;
 }
 
 .grid-item--width2 { width: 320px; }

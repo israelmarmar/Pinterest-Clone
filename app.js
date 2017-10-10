@@ -153,9 +153,9 @@ $(function() {
 console.log("oi");
 
 
-$('.like').mouseover(function() {
-
-$('.like').children().css( "display", "block" );
+$('.grid-item').mouseover(function() {
+console.log("m");
+$('.grid-item').children().css( "display", "block" );
 
 });
 
