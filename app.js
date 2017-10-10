@@ -74,9 +74,11 @@ var Photos= React.createClass({
   render: function () {
     return (<div className='grid'>
       {this.state.data.map(function(item) {
+        var w=parseInt(item.size.split("x")[0]);
+        var h=parseInt(item.size.split("x")[1]);
 
           return (
-          <a href="#"><img src={item.img} className="grid-item"/></a>)
+          <a href="#"><img src={item.img} style={{"height": h/100, "width": w/100}} className="grid-item"/></a>)
       })}
       </div>)
   }
