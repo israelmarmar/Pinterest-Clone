@@ -239,6 +239,7 @@ input, button {
 /* ---- grid-item ---- */
 
 .grid-item {
+  display:inline-block;
   width: 160px;
   height: 120px;
   float: left;
