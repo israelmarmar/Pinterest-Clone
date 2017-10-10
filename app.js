@@ -73,6 +73,7 @@ var Photos= React.createClass({
 
   render: function () {
     return (<div className='grid'>
+      <button>like</button>
       {this.state.data.map(function(item) {
         var w=parseInt(item.size.split("x")[0]);
         var h=parseInt(item.size.split("x")[1]);

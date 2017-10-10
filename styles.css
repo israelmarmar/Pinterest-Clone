@@ -243,6 +243,7 @@ input, button {
   height: 120px;
   float: left;
   border-radius: 5px;
+  z-index:97;
 }
 
 .grid-item--width2 { width: 320px; }
