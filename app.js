@@ -79,8 +79,8 @@ var Photos= React.createClass({
 
           return (
           <div className="grid-item" style={{"height": h/4, "width": w/4}} >
-          <button>like</button>
-          <a href="#"><img src={item.img} style={{"height": h/4, "width": w/4}}/></a>
+          <button className="like">like</button>
+          <a href="#"><img className="grid-item" src={item.img} style={{"height": h/4, "width": w/4}}/></a>
           </div>)
       })}
       </div>)
