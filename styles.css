@@ -255,11 +255,4 @@ input, button {
 .grid-item--height3 { height: 260px; }
 .grid-item--height4 { height: 360px; }
 
-.like {
-    position:relative;
-    top:-240px!important;
-    left:120px;
-}
-
-
 }
