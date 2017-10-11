@@ -90,7 +90,7 @@ var Photos= React.createClass({
   like: function(e){
     var th = this;
     this.serverRequest = 
-      axios.get("/likes?id="+e.target.id)
+      axios.get("/like?id="+e.target.id)
      
         .then(function(result) {    
       
