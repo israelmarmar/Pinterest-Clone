@@ -109,7 +109,7 @@ var Photos= React.createClass({
           return (
           <div className="div-item grid-item" style={{"height": h/4, "width": w/4}}>
           <button onMouseOver={th.over} id="user" className={"user hid btn btn-default btn-sm glyphicon glyphicon glyphicon-user"}/>
-          <button onMouseOver={th.over} id={item._id} className={"lk hid btn btn-default btn-sm glyphicon glyphicon-star "+(user?"":"disabled")}>{item.likes.length}</button>
+          <button onMouseOver={th.over} id={item._id} onClick={this.like} className={"lk hid btn btn-default btn-sm glyphicon glyphicon-star "+(user?"":"disabled")}>{item.likes.length}</button>
           <img onMouseOver={th.over} onMouseOut={th.out} className="grid-item" src={item.img} style={{"height": h/4, "width": w/4}}/>
           </div>)
       })}
