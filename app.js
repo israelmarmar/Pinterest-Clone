@@ -72,19 +72,31 @@ var Photos= React.createClass({
   },
 
   over: function(e){
-    var div=lik=e.target.parentElement.children;
-    var lik=div.like;
-    var usr=div.user;
+    var div=lik=e.target.parentElement.childNodes;
+    var lik=div[1];
+    var usr=div[0];
     lik.classList.remove("hid");
     usr.classList.remove("hid");
   },
 
   out: function(e){
-    var div=lik=e.target.parentElement.children;
-    var lik=div.like;
-    var usr=div.user;
+    var div=lik=e.target.parentElement.childNodes;
+    var lik=div[1];
+    var usr=div[0];
     lik.classList.add("hid");
     usr.classList.add("hid");
+  },
+
+  like: function(e){
+    var th = this;
+    this.serverRequest = 
+      axios.get("/likes?id="+e.target.id)
+     
+        .then(function(result) {    
+      
+          e.target.value=result.data.likes;
+      
+        })
   },
 
   render: function () {
@@ -97,7 +109,7 @@ var Photos= React.createClass({
           return (
           <div className="div-item grid-item" style={{"height": h/4, "width": w/4}}>
           <button onMouseOver={th.over} id="user" className={"user hid btn btn-default btn-sm glyphicon glyphicon glyphicon-user"}/>
-          <button onMouseOver={th.over} id="like" className={"lk hid btn btn-default btn-sm glyphicon glyphicon-star "+(user?"":"disabled")}>{item.likes.length}</button>
+          <button onMouseOver={th.over} id={item._id} className={"lk hid btn btn-default btn-sm glyphicon glyphicon-star "+(user?"":"disabled")}>{item.likes.length}</button>
           <img onMouseOver={th.over} onMouseOut={th.out} className="grid-item" src={item.img} style={{"height": h/4, "width": w/4}}/>
           </div>)
       })}
