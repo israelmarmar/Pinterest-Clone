@@ -71,16 +71,34 @@ var Photos= React.createClass({
      
   },
 
+  over: function(e){
+    var div=lik=e.target.parentElement.children;
+    var lik=div.like;
+    var usr=div.user;
+    lik.classList.remove("hid");
+    usr.classList.remove("hid");
+  },
+
+  out: function(e){
+    var div=lik=e.target.parentElement.children;
+    var lik=div.like;
+    var usr=div.user;
+    lik.classList.add("hid");
+    usr.classList.add("hid");
+  },
+
   render: function () {
+    var th=this;
     return (<div className='grid'>
       {this.state.data.map(function(item) {
         var w=parseInt(item.size.split("x")[0]);
         var h=parseInt(item.size.split("x")[1]);
 
           return (
-          <div className="grid-item" style={{"height": h/4, "width": w/4}} >
-          <button className="like btn btn-default btn-sm glyphicon glyphicon-star"></button>
-          <a href="#"><img className="grid-item" src={item.img} style={{"height": h/4, "width": w/4}}/></a>
+          <div className="div-item grid-item" style={{"height": h/4, "width": w/4}}>
+          <button onMouseOver={th.over} id="user" className={"user hid btn btn-default btn-sm glyphicon glyphicon glyphicon-user"}/>
+          <button onMouseOver={th.over} id="like" className={"lk hid btn btn-default btn-sm glyphicon glyphicon-star "+(user?"":"disabled")}>{item.likes.length}</button>
+          <img onMouseOver={th.over} onMouseOut={th.out} className="grid-item" src={item.img} style={{"height": h/4, "width": w/4}}/>
           </div>)
       })}
       </div>)
@@ -149,13 +167,19 @@ var Container = React.createClass({
 }
 });
 
+
+ReactDOM.render(<Container />, document.getElementById('cont'));
+
+
+
+
 $(function() {
 console.log("oi");
 
 
-$('.grid-item').mouseover(function() {
+$('.div-item').mouseover(function() {
 console.log("m");
-$('.grid-item').children().css( "display", "block" );
+$('.div-item').children().css( "display", "block" );
 
 });
 
@@ -165,6 +189,3 @@ $('.grid').masonry({
 });
 
 });
-
-
-ReactDOM.render(<Container />, document.getElementById('cont'));

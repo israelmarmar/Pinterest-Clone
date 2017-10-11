@@ -220,8 +220,16 @@ input, button {
 }
 
 .glyphicon {
-        top: 97%!important;
-    left: 20%!important;
+    top: 97%!important;
+}
+
+
+.lk{
+  left: 20%!important;
+}
+
+.user{
+  right: 20%!important;
 }
 
 .grid {
@@ -245,8 +253,8 @@ input, button {
   z-index:97;
 }
 
-.like{
-  display:none!important;
+.hid{
+  visibility: hidden;
 }
 
 .grid-item--width2 { width: 320px; }
