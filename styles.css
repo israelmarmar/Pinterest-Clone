@@ -14,9 +14,7 @@
     display:flex;
       flex-direction: column;
         align-items: center;
-    text-align: center;
-    padding-top: 100px;
-    
+    text-align: center;  
     padding-bottom: 100px;
     background-color: initial!important;
     
@@ -144,7 +142,7 @@ padding-left: 20px;
     margin-top: -18px!important;
 cursor:pointer;
 font-family: Helvetica,Arial,sans-serif!important;
-
+margin-left: 10px;
 }
 
 #btnsnav{
@@ -225,11 +223,13 @@ input, button {
 
 
 .lk{
-  left: 20%!important;
+  margin-bottom:25px!important;
+  z-index:101;
 }
 
 .user{
-  right: 20%!important;
+  margin-bottom:25px!important;
+  z-index:101;
 }
 
 .grid {
@@ -250,7 +250,8 @@ input, button {
   height: 120px;
   float: left;
   border-radius: 5px;
-  z-index:97;
+  z-index:-1;
+  margin-left: 10px;
 }
 
 .hid{
@@ -265,6 +266,27 @@ input, button {
 .grid-item--height3 { height: 260px; }
 .grid-item--height4 { height: 360px; }
 
+.imgpin{
+	position:relative;
+	left:0%;
+	right:0%;
+	top:0%;
+	bottom:0%;
+	margin-top: -22px;
+    margin-right: 0px;
+    margin-left: 0px;
+	z-index:97;
+	
+}
 
+
+.showdrop {
+    display: block!important;
+}
+
+.dropdown-menu{
+	 top: 12%!important;
+    left: 73%!important;
+}
 
 }
