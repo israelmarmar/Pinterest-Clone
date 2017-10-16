@@ -252,6 +252,7 @@ input, button {
   border-radius: 5px;
   z-index:-1;
   margin-left: 10px;
+  margin-top: 10px;
 }
 
 .hid{
@@ -285,7 +286,7 @@ input, button {
 }
 
 .dropdown-menu{
-	 top: 12%!important;
+	 top: 55px!important;
     left: 73%!important;
 }
 

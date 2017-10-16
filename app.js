@@ -41,7 +41,8 @@ function getCookie(cname) {
 if(document.cookie && getCookie("user")!=="undefined"){
   var user=JSON.parse(getCookie("user"));
   var username=user.name;
-  console.log(username);
+  console.log(user);
+
   }
 
  var Blike= React.createClass({
@@ -92,6 +93,9 @@ if(document.cookie && getCookie("user")!=="undefined"){
          }
  });
   
+
+
+
 var Photos= React.createClass({
 
   getInitialState: function () {
@@ -100,9 +104,33 @@ var Photos= React.createClass({
 
            };
   },
+
+  update: function(){
+
+    if(changepins){
+      console.log("ooi");
+    var th = this;
+    this.serverRequest = 
+      axios.get("/photos")
+     
+        .then(function(result) {    
+          
+          if(result){
+          changepins=false;
+          th.setState({
+            data: result.data,
+ 
+          });
+          changepins=false;
+        }
+      
+        })
+      }
+  },
   
    componentDidMount: function() {
    
+   this.interval = setInterval(this.update, 100);
   var th = this;
     this.serverRequest = 
       axios.get("/photos")
@@ -123,7 +151,11 @@ var Photos= React.createClass({
     var div=lik=e.target.parentElement.childNodes;
     var lik=div[1];
     var usr=div[0];
+
+    if(lik)
     lik.classList.remove("hid");
+
+    if(usr)
     usr.classList.remove("hid");
   },
 
@@ -135,8 +167,32 @@ var Photos= React.createClass({
     usr.classList.add("hid");
   },
 
+  userpins: function(e){
+    var th = this;
+    console.log("Oi");
+    console.log(e.target);
+    th.setState({
+            data: [],
+ 
+          });
+    this.serverRequest = 
+      axios.get("/photos?user="+e.target.title)
+     
+        .then(function(result) {    
+      
+          th.setState({
+            data: result.data,
+ 
+          });
+
+          console.log(result.data);
+      
+        })
+  },
+
   render: function () {
     var th=this;
+
     return (<div className='grid'>
       {this.state.data.map(function(item) {
         var w=parseInt(item.size.split("x")[0]);
@@ -144,7 +200,14 @@ var Photos= React.createClass({
 		var mypin=item.likes.map(x => x.user).indexOf(user.screen_name)!==-1;
           return (
           <div className="grid-item" style={{"height": h/4, "width": w/4}}>
-          <button onMouseOver={th.over} id="user" title={item.user} className={"user hid btn btn-default btn-sm glyphicon glyphicon glyphicon-user"}/>
+          <button onMouseOver={th.over} onClick={th.userpins} id="user" title={item.user} className={"user hid btn btn-default btn-sm glyphicon"+(item.imguser?"":" glyphicon-user")}>
+          
+          {() => {
+            if(item.imguser)
+          return<img title={item.user} src={item.imguser} height="24" width="24"/>
+          }()}
+
+          </button>
         <Blike id={item._id} likes={item.likes.length} style={{"color": mypin?"#337ab7":"black"}} className={"lk hid btn btn-default btn-sm glyphicon glyphicon-star "+(user?"":"disabled")}/>
 		 <img onMouseOver={th.over} onMouseOut={th.out} className="imgpin grid-item" src={item.img} style={{"height": h/4, "width": w/4}}/>
           </div>)
@@ -160,6 +223,8 @@ var Container = React.createClass({
 
     ev.preventDefault();
 	var btn=ev.target.submit;
+  var inurl=ev.target.url;
+  var indesc=ev.target.desc;
 	btn.classList.add("disabled");
 	var value=btn.innerHTML;
     btn.innerHTML="<i class='fa fa-circle-o-notch fa-spin'></i>"+btn.innerHTML;
@@ -171,12 +236,16 @@ var Container = React.createClass({
             success: function (data) {
 			
 			if(data.msg=="ok"){
+        changepins=true;
 			btn.innerHTML=value;
-            btn.classList.remove('disabled');
+      btn.classList.remove('disabled');
+      inurl.value="";
+      indesc.value="";
+      document.getElementById('drop').classList.remove("showdrop");
 			}
 			
 			}
-	});
+	   });
 	
 	  },
 
@@ -238,10 +307,10 @@ var Container = React.createClass({
              <div className="page">
 			 
 			 <div id="drop" className="dropdown-menu">
-			 <form className="add-form" action="/addpin" method="post" onSubmit={this.submitform}>
-			 <input type="text" name="url" placeholder="Pic url..." className="form-control" />
-			 <input type="text" name="desc" placeholder="Pic description..." className="form-control" />
-			 <button id="submit" type="submit" className="btn btn-primary btn-block">Send</button>
+			 <form className="add-form" action="/addpin" method="GET" onSubmit={this.submitform}>
+			 <input id="url" type="text" onClick={th.drop} name="url" placeholder="Pic url..." className="form-control" />
+			 <input id="desc" type="text" onClick={th.drop} name="desc" placeholder="Pic description..." className="form-control" />
+			 <button id="submit" onClick={th.drop} type="submit" className="btn btn-primary btn-block">Send</button>
 			 </form>
 			 </div>
 			 
@@ -256,7 +325,8 @@ var Container = React.createClass({
 ReactDOM.render(<Container />, document.getElementById('cont'));
 
 function hiddrop(){
-document.getElementById('drop').classList.remove("showdrop"); 	
+document.getElementById('drop').classList.remove("showdrop");
+
 }
 
 document.body.addEventListener('click', hiddrop, true); 

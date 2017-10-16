@@ -105,9 +105,9 @@ app.get("/request-token", function(req, res) {
 
 
 app.get("/photos",function(req,res){
+console.log(req.query.user);
 
-
-  db.collection("pinterest").find().toArray(function(err, result) {
+  db.collection("pinterest").find(req.query.user?{user: req.query.user}:{}).sort({date: -1}).toArray(function(err, result) {
     if (err) throw err;
     //result.likes=result.likes.length;
     res.json(result);
@@ -120,14 +120,21 @@ var resp=res;
 
 	if(req.session.user){
 		
-		requestImageSize(req.query.url)
+    console.log(new Date(Date.now()).toLocaleString());
+		requestImageSize({ url: req.query.url, "rejectUnauthorized": false, headers: { 'User-Agent': 'request-image-size' } })
 		.then(size => db.collection("pinterest").insertOne({user: req.session.user.screen_name, 
 		img: req.query.url,
 			likes: [],
-			size: ""+size.width+"x"+size.height}, function(err, res) {
+			size: ""+size.width+"x"+size.height, 
+      imguser: req.session.user.profile_image_url,
+      date: new Date(Date.now()).toLocaleString()}, function(err, res) {
 				if (err) throw err;
 				resp.json({msg: "ok"});
-		})	)
+        console.log(size);
+        console.log(res.result);
+		})	
+
+    )
 		.catch(err => console.error(err));
 
 		
@@ -140,13 +147,14 @@ var resp=res;
 
 app.get("/like",function(req,res){
 var resp=res;
-var id=new ObjectId(req.query.id);
+var id=new ObjectId(req.query.id) || req.query.id;
 
   if(req.session.user){
   db.collection("pinterest").findOne({_id: id}, function(err, doc) {
     if (err) throw err;
     console.log(doc);
 	
+  if(doc){
 	if(doc.likes.length==0){
         console.log("adicionado");
         doc.likes.push({user: req.session.user.screen_name});
@@ -183,7 +191,7 @@ var id=new ObjectId(req.query.id);
 			resp.json({likes: doc.likes.length});
 		});
 
-
+  }
   });
 
   }else{
