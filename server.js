@@ -107,7 +107,7 @@ app.get("/request-token", function(req, res) {
 app.get("/photos",function(req,res){
 console.log(req.query.user);
 
-  db.collection("pinterest").find(req.query.user?{user: req.query.user}:{}).sort({date: -1}).toArray(function(err, result) {
+  db.collection("pinterest").find((req.query.user)?{user: req.query.user}:{}).sort({date: -1}).toArray(function(err, result) {
     if (err) throw err;
     //result.likes=result.likes.length;
     res.json(result);
@@ -143,6 +143,33 @@ var resp=res;
     resp.json({msg:"permission denied"});
 	
 	}
+});
+
+app.get("/delete",function(req,res){
+var id=new ObjectId(req.query.id) || req.query.id;
+var resp=res;
+
+  if(req.session.user){
+  
+  db.collection("pinterest").findOne({_id: id}, function(err, doc) { 
+ console.log(doc);
+    if(doc.user===req.session.user.screen_name){
+    db.collection("pinterest").deleteOne({_id:id}, function(err, obj) {
+    if (err) throw err;
+    console.log("1 document deleted");
+    resp.json({msg: "ok"});
+    });
+  }else
+  resp.json({msg:"permission denied"});
+
+  });
+    
+    
+  }else{
+    resp.json({msg:"permission denied"});
+  
+  }
+
 });
 
 app.get("/like",function(req,res){

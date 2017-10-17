@@ -1,4 +1,5 @@
 var changepins=false;
+var myp=false;
 
 function serialize(form) {
     var result = [];
@@ -55,10 +56,24 @@ if(document.cookie && getCookie("user")!=="undefined"){
   },
 	 over: function(e){
     var div=lik=e.target.parentElement.childNodes;
+    console.log(div);
+    if(div.length==2){
     var lik=div[1];
     var usr=div[0];
+  }else{
+    var lik=div[2];
+    var rem=div[1];
+    var usr=div[0];
+  }
+
+    if(lik)
     lik.classList.remove("hid");
+
+    if(usr)
     usr.classList.remove("hid");
+
+    if(rem)
+    rem.classList.remove("hid");  
 	},
 
 	like: function(e){
@@ -108,10 +123,10 @@ var Photos= React.createClass({
   update: function(){
 
     if(changepins){
-      console.log("ooi");
+
     var th = this;
     this.serverRequest = 
-      axios.get("/photos")
+      axios.get("/photos?user="+(myp?user.screen_name:""))
      
         .then(function(result) {    
           
@@ -122,6 +137,7 @@ var Photos= React.createClass({
  
           });
           changepins=false;
+          myp=false;
         }
       
         })
@@ -148,33 +164,100 @@ var Photos= React.createClass({
   },
 
   over: function(e){
-    var div=lik=e.target.parentElement.childNodes;
+
+    var div=e.target.childNodes;
+
+    if(div.length==2){
     var lik=div[1];
     var usr=div[0];
+  }else{
+    var lik=div[2];
+    var rem=div[1];
+    var usr=div[0];
+  }
 
     if(lik)
     lik.classList.remove("hid");
 
     if(usr)
     usr.classList.remove("hid");
+
+    if(rem)
+    rem.classList.remove("hid");  
+  },
+
+  overb: function(e){
+    var div=lik=e.target.parentElement.childNodes;
+    
+    if(div.length==2){
+    var lik=div[1];
+    var usr=div[0];
+  }else{
+    var lik=div[2];
+    var rem=div[1];
+    var usr=div[0];
+  }
+
+    if(lik)
+    lik.classList.remove("hid");
+
+    if(usr)
+    usr.classList.remove("hid");
+
+    if(rem)
+    rem.classList.remove("hid");  
+  },
+
+  outb: function(e){
+    var div=lik=e.target.parentElement.childNodes;
+
+    if(div.length==2){
+    var lik=div[1];
+    var usr=div[0];
+  }else{
+    var lik=div[2];
+    var rem=div[1];
+    var usr=div[0];
+  }
+
+    if(lik)
+    lik.classList.add("hid");
+
+    if(usr)
+    usr.classList.add("hid");
+
+    if(rem)
+    rem.classList.add("hid");  
   },
 
   out: function(e){
-    var div=lik=e.target.parentElement.childNodes;
+
+    var div=e.target.childNodes;
+
+    if(div.length==2){
     var lik=div[1];
     var usr=div[0];
+  }else{
+    var lik=div[2];
+    var rem=div[1];
+    var usr=div[0];
+  }
+
+    if(lik)
     lik.classList.add("hid");
+
+    if(usr)
     usr.classList.add("hid");
+
+    if(rem)
+    rem.classList.add("hid");
   },
 
   userpins: function(e){
     var th = this;
     console.log("Oi");
     console.log(e.target);
-    th.setState({
-            data: [],
- 
-          });
+
     this.serverRequest = 
       axios.get("/photos?user="+e.target.title)
      
@@ -190,6 +273,23 @@ var Photos= React.createClass({
         })
   },
 
+  delete: function(e){
+    console.log(e.target.id);
+
+    var th = this;
+    this.serverRequest = 
+      axios.get("/delete?id="+e.target.id)
+     
+        .then(function(result) {
+            console.log(result.data);
+          if(result.data.msg=="ok")
+          changepins=true;
+ 
+          });
+      
+        
+  },
+
   render: function () {
     var th=this;
 
@@ -199,17 +299,17 @@ var Photos= React.createClass({
         var h=parseInt(item.size.split("x")[1]);
 		var mypin=item.likes.map(x => x.user).indexOf(user.screen_name)!==-1;
           return (
-          <div className="grid-item" style={{"height": h/4, "width": w/4}}>
-          <button onMouseOver={th.over} onClick={th.userpins} id="user" title={item.user} className={"user hid btn btn-default btn-sm glyphicon"+(item.imguser?"":" glyphicon-user")}>
-          
+          <div className="grid-item" onMouseOver={th.over} onMouseOut={th.out} style={{"height": h/4, "width": w/4, "backgroundImage": "url("+item.img+")", "backgroundSize": "contain"}}>
+          <button style={{"height": "25px", width:"25px", "backgroundImage": "url("+item.imguser+")", "backgroundSize": "contain"}} onMouseOver={th.overb} onClick={th.userpins} id="user" title={item.user} className={"user hid btn btn-default btn-sm glyphicon"+(item.imguser?"":" glyphicon-user")} />
+        
+
           {() => {
-            if(item.imguser)
-          return<img title={item.user} src={item.imguser} height="24" width="24"/>
+            if(user && user.screen_name==item.user)
+              return<button id={item._id} onClick={th.delete} onMouseOver={th.overb} className="btn hid lk btn-default btn-sm glyphicon glyphicon-remove"/>
           }()}
 
-          </button>
         <Blike id={item._id} likes={item.likes.length} style={{"color": mypin?"#337ab7":"black"}} className={"lk hid btn btn-default btn-sm glyphicon glyphicon-star "+(user?"":"disabled")}/>
-		 <img onMouseOver={th.over} onMouseOut={th.out} className="imgpin grid-item" src={item.img} style={{"height": h/4, "width": w/4}}/>
+        
           </div>)
       })}
       </div>)
@@ -258,6 +358,15 @@ var Container = React.createClass({
 	document.getElementById('drop').classList.add("showdrop");  
 	},
 
+  all: function(){
+    changepins=true;
+  },
+
+  mypics: function(){
+    changepins=true;
+    myp=true;
+  },
+
   render: function () {
 	var th=this;
   return(<div className="cont">
@@ -281,7 +390,7 @@ var Container = React.createClass({
 
                 if(user)
                   return(
-                    <div id="all" className="btnnav">All</div>
+                    <div onClick={this.all} id="all" className="btnnav">All</div>
                     )
                 }()}
 
@@ -289,7 +398,7 @@ var Container = React.createClass({
 
                 if(user)
                   return(
-                    <div id="mypics" className="btnnav">My Pics</div>
+                    <div onClick={this.mypics} id="mypics" className="btnnav">My Pics</div>
                     )
                 }()}
 
