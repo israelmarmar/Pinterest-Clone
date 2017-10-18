@@ -8,13 +8,30 @@
     "npm": "latest"
   },
   "dependencies": {
+    "axios": "^0.16.2",
+    "bootstrap": "^3.3.7",
+    "browserify-fs": "^1.0.0",
     "cookie-parser": "^1.4.3",
+    "create-react-class": "^15.6.2",
     "express": "^4.15.4",
     "express-session": "^1.15.5",
+    "jquery": "^3.2.1",
+    "jquery-bridget": "^2.0.1",
+    "masonry": "0.0.2",
+    "masonry-layout": "^4.2.0",
     "mongodb": "^2.2.31",
-    "node-twitter-api": "^1.8.0"
+    "node-twitter-api": "^1.8.0",
+    "react": "^16.0.0",
+    "react-dom": "^16.0.0",
+    "request-image-size": "^2.1.0"
   },
   "scripts": {
     "start": "node server.js"
+  },
+  "devDependencies": {
+    "babel-preset-env": "^1.6.1",
+    "babel-preset-react": "^6.24.1",
+    "babelify": "^7.3.0",
+    "browserify": "^14.4.0"
   }
 }

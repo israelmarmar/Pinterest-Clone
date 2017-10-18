@@ -1,3 +1,13 @@
+var React = require('react');
+var ReactDOM = require("react-dom");
+var createReactClass = require('create-react-class');
+var Masonry = require("masonry-layout");
+global.jQuery = require("jquery");
+var $=require("jquery");
+var axios = require('axios');
+var bootstrap = require("bootstrap");
+var jQueryBridget = require('jquery-bridget');
+
 var changepins=false;
 var myp=false;
 
@@ -46,7 +56,7 @@ if(document.cookie && getCookie("user")!=="undefined"){
 
   }
 
- var Blike= React.createClass({
+ var Blike= createReactClass({
 	 
 	 getInitialState: function () {
     return { 
@@ -56,7 +66,7 @@ if(document.cookie && getCookie("user")!=="undefined"){
   },
 	 over: function(e){
     var div=lik=e.target.parentElement.childNodes;
-    console.log(div);
+
     if(div.length==2){
     var lik=div[1];
     var usr=div[0];
@@ -111,7 +121,7 @@ if(document.cookie && getCookie("user")!=="undefined"){
 
 
 
-var Photos= React.createClass({
+var Photos= createReactClass({
 
   getInitialState: function () {
     return { 
@@ -176,10 +186,10 @@ var Photos= React.createClass({
     var usr=div[0];
   }
 
-    if(lik)
+    if(lik && lik.classList)
     lik.classList.remove("hid");
 
-    if(usr)
+    if(usr && usr.classList)
     usr.classList.remove("hid");
 
     if(rem)
@@ -246,7 +256,7 @@ var Photos= React.createClass({
     if(lik)
     lik.classList.add("hid");
 
-    if(usr)
+    if(usr && usr.classList)
     usr.classList.add("hid");
 
     if(rem)
@@ -299,14 +309,14 @@ var Photos= React.createClass({
         var h=parseInt(item.size.split("x")[1]);
 		var mypin=item.likes.map(x => x.user).indexOf(user.screen_name)!==-1;
           return (
-          <div className="grid-item" onMouseOver={th.over} onMouseOut={th.out} style={{"height": h/4, "width": w/4, "backgroundImage": "url("+item.img+")", "backgroundSize": "contain"}}>
+          <div className="grid-item" onMouseOver={th.over} onMouseOut={th.out} style={{"height": h/4, "width": ((w/4)/1200)*100+"%", "backgroundImage": "url("+item.img+")", "backgroundSize": "100% 100%"}}>
           <button style={{"height": "25px", width:"25px", "backgroundImage": "url("+item.imguser+")", "backgroundSize": "contain"}} onMouseOver={th.overb} onClick={th.userpins} id="user" title={item.user} className={"user hid btn btn-default btn-sm glyphicon"+(item.imguser?"":" glyphicon-user")} />
         
 
-          {() => {
+          { (function(){
             if(user && user.screen_name==item.user)
               return<button id={item._id} onClick={th.delete} onMouseOver={th.overb} className="btn hid lk btn-default btn-sm glyphicon glyphicon-remove"/>
-          }()}
+          })()}
 
         <Blike id={item._id} likes={item.likes.length} style={{"color": mypin?"#337ab7":"black"}} className={"lk hid btn btn-default btn-sm glyphicon glyphicon-star "+(user?"":"disabled")}/>
         
@@ -317,7 +327,7 @@ var Photos= React.createClass({
 
 });
 
-var Container = React.createClass({
+var Container = createReactClass({
 	
 	 submitform: function(ev){
 
@@ -367,47 +377,48 @@ var Container = React.createClass({
     myp=true;
   },
 
+  logout: function(){
+    window.location.href="/logout";
+  },
+
   render: function () {
 	var th=this;
   return(<div className="cont">
              <div className="navbar">
 			 
              <img className="icoheader" src="picasa_21755.png" width="50" height="50" />
-             {() => {
-                
-              }()}
 
                 <div id="btnsnav">
-                {() => {
+                {(function(){
 
                   if(!user)
-                return(<div className="btn btn-default navbar-btn btnnav" onClick={this.submit} id="signup">Sign up</div>)
+                return(<div className="btn btn-default navbar-btn btnnav" onClick={th.submit} id="signup">Sign up</div>)
                   else
-                    return(<div className="btn btn-default navbar-btn btnnav" onClick={this.logout} id="signup">Sign Out</div>)
-                }()}
+                    return(<div className="btn btn-default navbar-btn btnnav" onClick={th.logout} id="signup">Sign Out</div>)
+                })()}
 
-                {() => {
-
-                if(user)
-                  return(
-                    <div onClick={this.all} id="all" className="btnnav">All</div>
-                    )
-                }()}
-
-                {() => {
+                {(function(){
 
                 if(user)
                   return(
-                    <div onClick={this.mypics} id="mypics" className="btnnav">My Pics</div>
+                    <div onClick={th.all} id="all" className="btnnav">All</div>
                     )
-                }()}
+                })()}
 
-                {() => {
+                {(function(){
+
+                if(user)
+                  return(
+                    <div onClick={th.mypics} id="mypics" className="btnnav">My Pics</div>
+                    )
+                })()}
+
+                {(function(){
                 if(user)
                   return(
                     <div id="addpic" onClick={th.drop} className="btnnav">Add Pic▾</div>
                     )
-                }()}
+                })()}
 
 
                 </div>
@@ -439,3 +450,12 @@ document.getElementById('drop').classList.remove("showdrop");
 }
 
 document.body.addEventListener('click', hiddrop, true); 
+
+var grid = document.querySelector('.grid');
+var msnry = new Masonry( grid, {
+  // options... 
+  itemSelector: '.grid-item',
+  columnWidth: 200
+});
+
+console.log(msnry);
