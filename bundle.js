@@ -137,7 +137,7 @@ var Photos = createReactClass({
         data: []
 
       });
-      this.serverRequest = axios.get("/photos?user=" + (myp ? user.screen_name : "")).then(function (result) {
+      this.serverRequest = axios.get("/photos?user=" + (myp && user ? user.screen_name : "")).then(function (result) {
 
         if (result) {
           changepins = false;
@@ -286,7 +286,7 @@ var Photos = createReactClass({
         var h = parseInt(item.size.split("x")[1]);
         var mypin = item.likes.map(function (x) {
           return x.user;
-        }).indexOf(user.screen_name) !== -1;
+        }).indexOf(user ? user.screen_name : "") !== -1;
         return React.createElement(
           'div',
           { className: 'grid-item', onMouseOver: th.over, onMouseOut: th.out, style: { "height": h / 4, "width": w / 4 / 1200 * 100 + "%", "backgroundImage": "url(" + item.img + ")", "backgroundSize": "100% 100%" } },
