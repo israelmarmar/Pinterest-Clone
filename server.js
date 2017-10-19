@@ -52,7 +52,6 @@ var copy={};
 app.get('/', function (req, res) {
     res.setHeader('Content-Type', 'text/htm');
   	res.cookie("user",JSON.stringify(req.session.user));
-    res.setH
     res.sendFile("/main.html",{root: __dirname});
 });
 
