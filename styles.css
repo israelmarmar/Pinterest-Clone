@@ -288,6 +288,7 @@ input, button {
 .dropdown-menu{
 	 top: 55px!important;
     left: 73%!important;
+    z-index: 2000!important;
 }
 
 }

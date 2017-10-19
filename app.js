@@ -7,9 +7,12 @@ var $=require("jquery");
 var axios = require('axios');
 var bootstrap = require("bootstrap");
 var jQueryBridget = require('jquery-bridget');
+var msnry;
+var grid;
 
-var changepins=false;
+var changepins=true;
 var myp=false;
+var newpin;
 
 function serialize(form) {
     var result = [];
@@ -31,6 +34,13 @@ function serialize(form) {
                 ) result.push(encodeURIComponent(control.name) + '=' + encodeURIComponent(control.value));
         });
         return result.join('&').replace(/%20/g, '+');
+}
+
+function getItemElement(h,w,url) {
+  var elem = document.createElement('div');
+  elem.className="grid-item";
+  elem.setAttribute("style","height: "+h/4+"px; width: "+((w/4)/1200)*100+"%; background-image: url('"+url+"'); background-size: 100% 100%;");
+  return elem;
 }
 
 function getCookie(cname) {
@@ -87,7 +97,9 @@ if(document.cookie && getCookie("user")!=="undefined"){
 	},
 
 	like: function(e){
-		e.target.classList.add("disabled");
+    console.log(e.target.id);
+    var blik=e.target;
+		blik.classList.add("disabled");
     var th = this;
     this.serverRequest = 
       axios.get("/like?id="+e.target.id)
@@ -97,16 +109,16 @@ if(document.cookie && getCookie("user")!=="undefined"){
 	
 	if(result){
 		console.log("c");
-    e.target.classList.remove("disabled");
+    blik.classList.remove("disabled");
 	
           th.setState({
             likes: result.data.likes,
           });
 		  
-		  if(parseInt(result.data.likes)>e.target.value)
-		  e.target.setAttribute("style", "color: "+"#337ab7");
+		  if(parseInt(result.data.likes)>blik.value)
+		  blik.setAttribute("style", "color: "+"#337ab7");
 		  else
-	      e.target.setAttribute("style", "color: "+"black");
+	      blik.setAttribute("style", "color: "+"black");
 	}
       
         })
@@ -132,9 +144,13 @@ var Photos= createReactClass({
 
   update: function(){
 
-    if(changepins){
+     if(changepins){
 
     var th = this;
+    th.setState({
+            data: [],
+ 
+          });
     this.serverRequest = 
       axios.get("/photos?user="+(myp?user.screen_name:""))
      
@@ -146,6 +162,8 @@ var Photos= createReactClass({
             data: result.data,
  
           });
+          msnry.reloadItems();
+          msnry.layout();
           changepins=false;
           myp=false;
         }
@@ -167,7 +185,7 @@ var Photos= createReactClass({
             data: result.data,
  
           });
-      
+          changepins=false;
         })
      
      
@@ -277,23 +295,26 @@ var Photos= createReactClass({
             data: result.data,
  
           });
-
+          msnry.appended();
           console.log(result.data);
       
         })
   },
 
   delete: function(e){
-    console.log(e.target.id);
-
+    console.log(e.target.parentElement);
+    var pin=e.target.parentElement;
     var th = this;
     this.serverRequest = 
       axios.get("/delete?id="+e.target.id)
      
         .then(function(result) {
-            console.log(result.data);
           if(result.data.msg=="ok")
-          changepins=true;
+          {
+
+           msnry.remove(pin);
+          msnry.layout(); 
+          }
  
           });
       
@@ -346,7 +367,23 @@ var Container = createReactClass({
             success: function (data) {
 			
 			if(data.msg=="ok"){
-        changepins=true;
+      newpin=data;
+
+      var fragment = document.createDocumentFragment(); 
+      var elems=[];
+          var w=parseInt(data.size.split("x")[0]);
+          var h=parseInt(data.size.split("x")[1]);
+          var elem = getItemElement(h,w,data.img);
+          console.log(elem);
+          elems.push(elem);
+          fragment.appendChild( elem );
+          grid.appendChild( fragment );
+
+          grid.insertBefore( fragment, grid.firstChild );
+          msnry.prepended( elems );
+          myp=false;
+    
+
 			btn.innerHTML=value;
       btn.classList.remove('disabled');
       inurl.value="";
@@ -451,11 +488,30 @@ document.getElementById('drop').classList.remove("showdrop");
 
 document.body.addEventListener('click', hiddrop, true); 
 
-var grid = document.querySelector('.grid');
-var msnry = new Masonry( grid, {
+
+function init(){
+
+var wait=setInterval(
+
+  function(){ 
+  if(!changepins){
+  grid = document.querySelector('.grid');
+  msnry = new Masonry( grid, {
   // options... 
   itemSelector: '.grid-item',
   columnWidth: 200
-});
+  });
+  msnry.layout();
+  clearInterval(wait);
+  
+  }
+
+}, 100);
+
+}
+
+init();
+
+
 
 console.log(msnry);
