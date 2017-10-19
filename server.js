@@ -50,6 +50,7 @@ var copy={};
 }
 
 app.get('/', function (req, res) {
+    if(req.session.user)
   	res.cookie("user",JSON.stringify(req.session.user));
     res.sendFile("/main.html",{root: __dirname});
 });
