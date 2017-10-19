@@ -174,7 +174,7 @@ var resp=res;
 
 app.get("/like",function(req,res){
 var resp=res;
-var id=req.query.id || new ObjectId(req.query.id);
+var id=new ObjectId(req.query.id) || req.query.id;
 
   if(req.session.user){
   db.collection("pinterest").findOne({_id: id}, function(err, doc) {
