@@ -18,7 +18,7 @@ var grid;
 
 var changepins = true;
 var myp = false;
-var newpin;
+var newpin = {};
 
 function serialize(form) {
   var result = [];
@@ -28,13 +28,6 @@ function serialize(form) {
     });else if (['checkbox', 'radio'].indexOf(control.type) === -1 || control.checked) result.push(encodeURIComponent(control.name) + '=' + encodeURIComponent(control.value));
   });
   return result.join('&').replace(/%20/g, '+');
-}
-
-function getItemElement(h, w, url) {
-  var elem = document.createElement('div');
-  elem.className = "grid-item";
-  elem.setAttribute("style", "height: " + h / 4 + "px; width: " + w / 4 / 1200 * 100 + "%; background-image: url('" + url + "'); background-size: 100% 100%;");
-  return elem;
 }
 
 function getCookie(cname) {
@@ -131,7 +124,7 @@ var Photos = createReactClass({
   update: function update() {
 
     if (changepins) {
-
+      console.log("change");
       var th = this;
       th.setState({
         data: []
@@ -145,10 +138,9 @@ var Photos = createReactClass({
             data: result.data
 
           });
-          msnry.reloadItems();
-          msnry.layout();
-          changepins = false;
+
           myp = false;
+          init();
         }
       });
     }
@@ -156,7 +148,7 @@ var Photos = createReactClass({
 
   componentDidMount: function componentDidMount() {
 
-    this.interval = setInterval(this.update, 100);
+    this.interval = setInterval(this.update, 300);
     var th = this;
     this.serverRequest = axios.get("/photos").then(function (result) {
 
@@ -257,7 +249,6 @@ var Photos = createReactClass({
         data: result.data
 
       });
-      msnry.appended();
       console.log(result.data);
     });
   },
@@ -268,9 +259,9 @@ var Photos = createReactClass({
     var th = this;
     this.serverRequest = axios.get("/delete?id=" + e.target.id).then(function (result) {
       if (result.data.msg == "ok") {
+        console.log(msnry);
 
-        msnry.remove(pin);
-        msnry.layout();
+        changepins = true;
       }
     });
   },
@@ -278,9 +269,9 @@ var Photos = createReactClass({
   render: function render() {
     var th = this;
 
-    return React.createElement(
+    if (this.state.data === []) return React.createElement('div', { className: 'loader' });else return React.createElement(
       'div',
-      { className: 'grid' },
+      { id: 'grid', className: 'grid' },
       this.state.data.map(function (item) {
         var w = parseInt(item.size.split("x")[0]);
         var h = parseInt(item.size.split("x")[1]);
@@ -289,7 +280,7 @@ var Photos = createReactClass({
         }).indexOf(user ? user.screen_name : "") !== -1;
         return React.createElement(
           'div',
-          { className: 'grid-item', onMouseOver: th.over, onMouseOut: th.out, style: { "height": h / 4, "width": w / 4 / 1200 * 100 + "%", "backgroundImage": "url(" + item.img + ")", "backgroundSize": "100% 100%" } },
+          { id: item._id, className: 'grid-item', onMouseOver: th.over, onMouseOut: th.out, style: { "height": h / 4, "width": w / 4 / 1200 * 100 + "%", "backgroundImage": "url(" + item.img + ")", "backgroundSize": "100% 100%" } },
           React.createElement('button', { style: { "height": "25px", width: "25px", "backgroundImage": "url(" + item.imguser + ")", "backgroundSize": "contain" }, onMouseOver: th.overb, onClick: th.userpins, id: 'user', title: item.user, className: "user hid btn btn-default btn-sm glyphicon" + (item.imguser ? "" : " glyphicon-user") }),
           function () {
             if (user && user.screen_name == item.user) return React.createElement('button', { id: item._id, onClick: th.delete, onMouseOver: th.overb, className: 'btn hid lk btn-default btn-sm glyphicon glyphicon-remove' });
@@ -323,22 +314,9 @@ var Container = createReactClass({
       success: function success(data) {
 
         if (data.msg == "ok") {
-          newpin = data;
-
-          var fragment = document.createDocumentFragment();
-          var elems = [];
-          var w = parseInt(data.size.split("x")[0]);
-          var h = parseInt(data.size.split("x")[1]);
-          var elem = getItemElement(h, w, data.img);
-          console.log(elem);
-          elems.push(elem);
-          fragment.appendChild(elem);
-          grid.appendChild(fragment);
-
-          grid.insertBefore(fragment, grid.firstChild);
-          msnry.prepended(elems);
+          changepins = true;
           myp = false;
-
+          newpin = data;
           btn.innerHTML = value;
           btn.classList.remove('disabled');
           inurl.value = "";
@@ -359,6 +337,7 @@ var Container = createReactClass({
   },
 
   all: function all() {
+    myp = false;
     changepins = true;
   },
 
@@ -462,15 +441,13 @@ function init() {
         itemSelector: '.grid-item',
         columnWidth: 200
       });
-      msnry.layout();
+
       clearInterval(wait);
     }
   }, 100);
 }
 
 init();
-
-console.log(msnry);
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{"axios":2,"bootstrap":27,"create-react-class":41,"jquery":66,"jquery-bridget":65,"masonry-layout":67,"react":81,"react-dom":78}],2:[function(require,module,exports){

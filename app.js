@@ -12,7 +12,7 @@ var grid;
 
 var changepins=true;
 var myp=false;
-var newpin;
+var newpin={};
 
 function serialize(form) {
     var result = [];
@@ -34,13 +34,6 @@ function serialize(form) {
                 ) result.push(encodeURIComponent(control.name) + '=' + encodeURIComponent(control.value));
         });
         return result.join('&').replace(/%20/g, '+');
-}
-
-function getItemElement(h,w,url) {
-  var elem = document.createElement('div');
-  elem.className="grid-item";
-  elem.setAttribute("style","height: "+h/4+"px; width: "+((w/4)/1200)*100+"%; background-image: url('"+url+"'); background-size: 100% 100%;");
-  return elem;
 }
 
 function getCookie(cname) {
@@ -145,14 +138,14 @@ var Photos= createReactClass({
   update: function(){
 
      if(changepins){
-
+console.log("change");
     var th = this;
     th.setState({
-            data: [],
+            data: []
  
           });
     this.serverRequest = 
-      axios.get("/photos?user="+((myp && user)?user.screen_name:""))
+      axios.get("/photos?user="+(myp && user?user.screen_name:""))
      
         .then(function(result) {    
           
@@ -162,10 +155,9 @@ var Photos= createReactClass({
             data: result.data,
  
           });
-          msnry.reloadItems();
-          msnry.layout();
-          changepins=false;
+
           myp=false;
+          init();
         }
       
         })
@@ -174,7 +166,7 @@ var Photos= createReactClass({
   
    componentDidMount: function() {
    
-   this.interval = setInterval(this.update, 100);
+   this.interval = setInterval(this.update, 300);
   var th = this;
     this.serverRequest = 
       axios.get("/photos")
@@ -295,7 +287,6 @@ var Photos= createReactClass({
             data: result.data,
  
           });
-          msnry.appended();
           console.log(result.data);
       
         })
@@ -311,9 +302,9 @@ var Photos= createReactClass({
         .then(function(result) {
           if(result.data.msg=="ok")
           {
-
-           msnry.remove(pin);
-          msnry.layout(); 
+           console.log(msnry);
+            
+          changepins=true;
           }
  
           });
@@ -324,13 +315,16 @@ var Photos= createReactClass({
   render: function () {
     var th=this;
 
-    return (<div className='grid'>
+    if(this.state.data===[])
+      return(<div className="loader"></div>)
+    else
+    return (<div id="grid" className='grid'>
       {this.state.data.map(function(item) {
         var w=parseInt(item.size.split("x")[0]);
         var h=parseInt(item.size.split("x")[1]);
     var mypin=item.likes.map(x => x.user).indexOf(user?user.screen_name:"")!==-1;
           return (
-          <div className="grid-item" onMouseOver={th.over} onMouseOut={th.out} style={{"height": h/4, "width": ((w/4)/1200)*100+"%", "backgroundImage": "url("+item.img+")", "backgroundSize": "100% 100%"}}>
+          <div id={item._id} className="grid-item" onMouseOver={th.over} onMouseOut={th.out} style={{"height": h/4, "width": ((w/4)/1200)*100+"%", "backgroundImage": "url("+item.img+")", "backgroundSize": "100% 100%"}}>
           <button style={{"height": "25px", width:"25px", "backgroundImage": "url("+item.imguser+")", "backgroundSize": "contain"}} onMouseOver={th.overb} onClick={th.userpins} id="user" title={item.user} className={"user hid btn btn-default btn-sm glyphicon"+(item.imguser?"":" glyphicon-user")} />
         
 
@@ -367,23 +361,9 @@ var Container = createReactClass({
             success: function (data) {
       
       if(data.msg=="ok"){
+      changepins=true;
+      myp=false;
       newpin=data;
-
-      var fragment = document.createDocumentFragment(); 
-      var elems=[];
-          var w=parseInt(data.size.split("x")[0]);
-          var h=parseInt(data.size.split("x")[1]);
-          var elem = getItemElement(h,w,data.img);
-          console.log(elem);
-          elems.push(elem);
-          fragment.appendChild( elem );
-          grid.appendChild( fragment );
-
-          grid.insertBefore( fragment, grid.firstChild );
-          msnry.prepended( elems );
-          myp=false;
-    
-
       btn.innerHTML=value;
       btn.classList.remove('disabled');
       inurl.value="";
@@ -406,6 +386,7 @@ var Container = createReactClass({
   },
 
   all: function(){
+    myp=false;
     changepins=true;
   },
 
@@ -501,7 +482,8 @@ var wait=setInterval(
   itemSelector: '.grid-item',
   columnWidth: 200
   });
-  msnry.layout();
+  
+
   clearInterval(wait);
   
   }
@@ -511,7 +493,3 @@ var wait=setInterval(
 }
 
 init();
-
-
-
-console.log(msnry);
