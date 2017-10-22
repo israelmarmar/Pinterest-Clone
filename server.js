@@ -137,7 +137,17 @@ var resp=res;
 		})	
 
     )
-		.catch(err => console.error(err));
+		.catch(err => db.collection("pinterest").insertOne({user: req.session.user.screen_name, 
+		img: "placeholder.png",
+			likes: [],
+			size: "1000x1000", 
+      imguser: req.session.user.profile_image_url,
+      date: new Date(Date.now()).toLocaleString()}, function(err, res) {
+				if (err) throw err;
+        res.ops[0].msg="ok";
+				resp.json(res.ops[0]);
+        console.log(res.ops[0]);
+		})	);
 
 		
 		

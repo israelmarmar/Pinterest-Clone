@@ -10,9 +10,12 @@ var jQueryBridget = require('jquery-bridget');
 var msnry;
 var grid;
 
-var changepins=true;
-var myp=false;
 var newpin={};
+
+function reload(){
+	ReactDOM.unmountComponentAtNode(document.getElementById('page'));
+	ReactDOM.render(<Photos />,document.getElementById('page'));
+}
 
 function serialize(form) {
     var result = [];
@@ -134,42 +137,13 @@ var Photos= createReactClass({
 
            };
   },
-
-  update: function(){
-
-     if(changepins){
-console.log("change");
-    var th = this;
-    th.setState({
-            data: []
- 
-          });
-    this.serverRequest = 
-      axios.get("/photos?user="+(myp && user?user.screen_name:""))
-     
-        .then(function(result) {    
-          
-          if(result){
-          changepins=false;
-          th.setState({
-            data: result.data,
- 
-          });
-
-          myp=false;
-          init();
-        }
-      
-        })
-      }
-  },
   
    componentDidMount: function() {
    
-   this.interval = setInterval(this.update, 300);
+   this.interval = setInterval(this.update, 100);
   var th = this;
     this.serverRequest = 
-      axios.get("/photos")
+      axios.get(this.props.user?"/photos?user="+this.props.user:"/photos")
      
         .then(function(result) {    
       
@@ -177,7 +151,7 @@ console.log("change");
             data: result.data,
  
           });
-          changepins=false;
+         init();
         })
      
      
@@ -304,7 +278,7 @@ console.log("change");
           {
            console.log(msnry);
             
-          changepins=true;
+          reload();
           }
  
           });
@@ -315,8 +289,9 @@ console.log("change");
   render: function () {
     var th=this;
 
-    if(this.state.data===[])
-      return(<div className="loader"></div>)
+    if(this.state.data.length==0){
+      return(<img src="/load-gif-12.gif" height="80" width="80" />)
+	}
     else
     return (<div id="grid" className='grid'>
       {this.state.data.map(function(item) {
@@ -361,14 +336,12 @@ var Container = createReactClass({
             success: function (data) {
       
       if(data.msg=="ok"){
-      changepins=true;
-      myp=false;
-      newpin=data;
       btn.innerHTML=value;
       btn.classList.remove('disabled');
       inurl.value="";
       indesc.value="";
       document.getElementById('drop').classList.remove("showdrop");
+	  reload();
       }
       
       }
@@ -386,13 +359,11 @@ var Container = createReactClass({
   },
 
   all: function(){
-    myp=false;
-    changepins=true;
+    reload();
   },
 
   mypics: function(){
-    changepins=true;
-    myp=true;
+    reload();
   },
 
   logout: function(){
@@ -442,15 +413,17 @@ var Container = createReactClass({
                 </div>
 
              </div>
-             <div className="page">
-       
-       <div id="drop" className="dropdown-menu">
+			 
+			 <div id="drop" className="dropdown-menu">
        <form className="add-form" action="/addpin" method="GET" onSubmit={this.submitform}>
        <input id="url" type="text" onClick={th.drop} name="url" placeholder="Pic url..." className="form-control" />
        <input id="desc" type="text" onClick={th.drop} name="desc" placeholder="Pic description..." className="form-control" />
        <button id="submit" onClick={th.drop} type="submit" className="btn btn-primary btn-block">Send</button>
        </form>
        </div>
+             <div id="page" className="page">
+       
+       
        
              <Photos />
              </div>
@@ -471,24 +444,13 @@ document.body.addEventListener('click', hiddrop, true);
 
 
 function init(){
-
-var wait=setInterval(
-
-  function(){ 
-  if(!changepins){
+	
   grid = document.querySelector('.grid');
   msnry = new Masonry( grid, {
   // options... 
   itemSelector: '.grid-item',
   columnWidth: 200
   });
-  
-
-  clearInterval(wait);
-  
-  }
-
-}, 100);
 
 }
 
