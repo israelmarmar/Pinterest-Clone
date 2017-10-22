@@ -505,7 +505,8 @@ var Container = createReactClass({
   },
 
   mypics: function mypics() {
-    reload();
+    ReactDOM.unmountComponentAtNode(document.getElementById('page'));
+    ReactDOM.render(React.createElement(Photos, { user: user.screen_name }), document.getElementById('page'));
   },
 
   logout: function logout() {

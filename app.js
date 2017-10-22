@@ -363,7 +363,8 @@ var Container = createReactClass({
   },
 
   mypics: function(){
-    reload();
+    ReactDOM.unmountComponentAtNode(document.getElementById('page'));
+	ReactDOM.render(<Photos user={user.screen_name}/>,document.getElementById('page'));
   },
 
   logout: function(){
