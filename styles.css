@@ -248,12 +248,11 @@ input, button {
   height: 120px;
   float: left;
   border-radius: 5px;
-  z-index:-1;
    margin-left: 10px;
   margin-top: 10px;
   padding-bottom: 30px;
-  z-index: 1000;
-
+  z-index:100;
+  position: relative;
   transition: all 0.4s ease;
           animation: grow 0.4s ;
 }

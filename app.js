@@ -1,5 +1,8 @@
 var React = require('react');
 var ReactDOM = require("react-dom");
+var Redux = require("redux");
+var connect= require("react-redux").connect;
+var Provider=require("react-redux").Provider;
 var createReactClass = require('create-react-class');
 var Masonry = require("masonry-layout");
 global.jQuery = require("jquery");
@@ -7,7 +10,8 @@ var $=require("jquery");
 var axios = require('axios');
 var bootstrap = require("bootstrap");
 var jQueryBridget = require('jquery-bridget');
-var msnry;
+var PropTypes = require('prop-types');
+var msnry=null;
 var grid;
 
 var newpin={};
@@ -61,6 +65,7 @@ if(document.cookie && getCookie("user")!=="undefined"){
   console.log(user);
 
   }
+
 
  var Blike= createReactClass({
    
@@ -125,33 +130,56 @@ if(document.cookie && getCookie("user")!=="undefined"){
           <button onMouseOver={this.over} style={this.props.style} id={this.props.id} onClick={this.like} className={this.props.className}>{this.state.likes}</button>)
          }
  });
-  
 
+
+
+ var pinReducer = function(state, action) {
+  if (state === undefined) {
+    state = [];
+  }
+  if (action.type === 'ADD_USER') {
+    return [action.data].concat(state);
+  }
+  if (action.type === 'USER_LIST_SUCCESS') {
+    state= (action.data);
+  }
+  return state;
+  }
+
+  const store = Redux.createStore(pinReducer);
+
+  const mapStateToProps = function(store) {
+    console.log(store);
+  return {
+    data: store
+  };
+  }
 
 
 var Photos= createReactClass({
 
-  getInitialState: function () {
-    return { 
-            data:[]
-
-           };
+  getDefaultProps() {
+    return{
+      data:[]
+    };
   },
-  
+
    componentDidMount: function() {
    
-   this.interval = setInterval(this.update, 100);
   var th = this;
     this.serverRequest = 
-      axios.get(this.props.user?"/photos?user="+this.props.user:"/photos")
+      axios.get(this.props.user?("/photos?user="+this.props.user):"/photos")
      
         .then(function(result) {    
-      
-          th.setState({
-            data: result.data,
- 
+          console.log(result.data);
+          store.dispatch({
+          type: 'USER_LIST_SUCCESS',
+          data: result.data
           });
-         init();
+
+          console.log(store.getState());
+
+init();
         })
      
      
@@ -256,10 +284,9 @@ var Photos= createReactClass({
       axios.get("/photos?user="+e.target.title)
      
         .then(function(result) {    
-      
-          th.setState({
-            data: result.data,
- 
+        store.dispatch({
+          type: 'USER_LIST_SUCCESS',
+          data: result.data
           });
           console.log(result.data);
       
@@ -274,11 +301,16 @@ var Photos= createReactClass({
       axios.get("/delete?id="+e.target.id)
      
         .then(function(result) {
-          if(result.data.msg=="ok")
+          if(result.data)
           {
            console.log(msnry);
             
-          reload();
+          store.dispatch({
+          type: 'USER_LIST_SUCCESS',
+          data: result.data
+          });
+
+          init();
           }
  
           });
@@ -289,12 +321,12 @@ var Photos= createReactClass({
   render: function () {
     var th=this;
 
-    if(this.state.data.length==0){
+    if(this.props.data.length==0){
       return(<img src="/load-gif-12.gif" height="80" width="80" />)
 	}
     else
     return (<div id="grid" className='grid'>
-      {this.state.data.map(function(item) {
+      {this.props.data.map(function(item) {
         var w=parseInt(item.size.split("x")[0]);
         var h=parseInt(item.size.split("x")[1]);
     var mypin=item.likes.map(x => x.user).indexOf(user?user.screen_name:"")!==-1;
@@ -316,6 +348,9 @@ var Photos= createReactClass({
   }
 
 });
+
+var Photos=connect(mapStateToProps)(Photos);
+
 
 var Container = createReactClass({
   
@@ -341,7 +376,13 @@ var Container = createReactClass({
       inurl.value="";
       indesc.value="";
       document.getElementById('drop').classList.remove("showdrop");
-	  reload();
+      
+      store.dispatch({
+          type: 'ADD_USER',
+          data: data
+      });
+      
+      init();
       }
       
       }
@@ -359,12 +400,37 @@ var Container = createReactClass({
   },
 
   all: function(){
-    reload();
+     var th = this;
+    this.serverRequest = 
+      axios.get("/photos")
+     
+        .then(function(result) {    
+          console.log(result.data);
+          store.dispatch({
+          type: 'USER_LIST_SUCCESS',
+          data: result.data
+          });
+
+          console.log(store.getState());
+         init();
+        })
   },
 
   mypics: function(){
-    ReactDOM.unmountComponentAtNode(document.getElementById('page'));
-	ReactDOM.render(<Photos user={user.screen_name}/>,document.getElementById('page'));
+
+      axios.get("/photos?user="+user.screen_name)
+     
+        .then(function(result) {    
+          console.log(result.data);
+          store.dispatch({
+          type: 'USER_LIST_SUCCESS',
+          data: result.data
+          });
+
+          console.log(store.getState());
+         init();
+        })
+     
   },
 
   logout: function(){
@@ -434,7 +500,7 @@ var Container = createReactClass({
 });
 
 
-ReactDOM.render(<Container />, document.getElementById('cont'));
+ReactDOM.render(<Provider store={store}><Container /></Provider>, document.getElementById('cont'));
 
 function hiddrop(){
 document.getElementById('drop').classList.remove("showdrop");
@@ -446,13 +512,19 @@ document.body.addEventListener('click', hiddrop, true);
 
 function init(){
 	
+  if(msnry){
+    console.log("oi");
+    msnry.destroy();
+  }
+ 
   grid = document.querySelector('.grid');
   msnry = new Masonry( grid, {
   // options... 
   itemSelector: '.grid-item',
-  columnWidth: 200
+  columnWidth: 160
   });
+
+  msnry.layout();
 
 }
 
-init();
