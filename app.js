@@ -138,6 +138,7 @@ if(document.cookie && getCookie("user")!=="undefined"){
     state = [];
   }
   if (action.type === 'ADD_USER') {
+
     return [action.data].concat(state);
   }
   if (action.type === 'USER_LIST_SUCCESS') {
@@ -310,7 +311,7 @@ init();
           data: result.data
           });
 
-          init();
+          msnry.layout();
           }
  
           });
@@ -514,7 +515,7 @@ function init(){
 	
   if(msnry){
     console.log("oi");
-    msnry.destroy();
+    msnry.layout();
   }
  
   grid = document.querySelector('.grid');
@@ -524,7 +525,7 @@ function init(){
   columnWidth: 160
   });
 
-  msnry.layout();
+
 
 }
 

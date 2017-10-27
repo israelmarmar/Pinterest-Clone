@@ -122,6 +122,7 @@ var pinReducer = function pinReducer(state, action) {
     state = [];
   }
   if (action.type === 'ADD_USER') {
+
     return [action.data].concat(state);
   }
   if (action.type === 'USER_LIST_SUCCESS') {
@@ -269,7 +270,7 @@ var Photos = createReactClass({
           data: result.data
         });
 
-        init();
+        msnry.layout();
       }
     });
   },
@@ -473,7 +474,7 @@ function init() {
 
   if (msnry) {
     console.log("oi");
-    msnry.destroy();
+    msnry.layout();
   }
 
   grid = document.querySelector('.grid');
@@ -482,8 +483,6 @@ function init() {
     itemSelector: '.grid-item',
     columnWidth: 160
   });
-
-  msnry.layout();
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
