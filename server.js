@@ -12,11 +12,11 @@ const requestImageSize = require('request-image-size');
 var Twitter = require("node-twitter-api");
 var _requestSecret;
 
-    var twitter = new Twitter({
-        consumerKey: "l0Q11C3VqtdLze9jQCHhQiX4V",
-      consumerSecret:"sdPtwLeAdlr3cR9WuPki6gCagFtBCuqx97fZn62dSktMf3yI7Z",
-      callback: "https://pinterest-clone-imm.herokuapp.com/access-token"
-    });
+var twitter = new Twitter({
+  consumerKey: "l0Q11C3VqtdLze9jQCHhQiX4V",
+  consumerSecret:"sdPtwLeAdlr3cR9WuPki6gCagFtBCuqx97fZn62dSktMf3yI7Z",
+  callback: "https://pinterest-clone-imm.herokuapp.com/access-token"
+});
 
 var db;
 
@@ -40,30 +40,30 @@ app.use(session({
 }));
 
 function clone(obj) {
-var copy={};
+  var copy={};
   console.log(obj._doc)
-    Object.keys(obj._doc).forEach(function (key) {
+  Object.keys(obj._doc).forEach(function (key) {
     copy[key]=obj[key];
-    }   );
-    console.log(copy);
-    return copy;
+  }   );
+  console.log(copy);
+  return copy;
 }
 
 app.get('/', function (req, res) {
  //req.session.user={"id":2987460604,"id_str":"2987460604","name":"Israel Martins","screen_name":"israelmarqmart","location":"","description":"","url":null,"entities":{"description":{"urls":[]}},"protected":false,"followers_count":0,"friends_count":0,"listed_count":0,"created_at":"Tue Jan 20 15:24:27 +0000 2015","favourites_count":0,"utc_offset":null,"time_zone":null,"geo_enabled":false,"verified":false,"statuses_count":1,"lang":"pt","status":{"created_at":"Thu Oct 05 15:42:48 +0000 2017","id":915965503289602000,"id_str":"915965503289602048","text":"@EbanxBR Quando Ã© vocÃªs vÃ£o aceitar recarga do ebanx por bitcoins?","truncated":false,"entities":{"hashtags":[],"symbols":[],"user_mentions":[{"screen_name":"EbanxBR","name":"EBANX","id":516722733,"id_str":"516722733","indices":[0,8]}],"urls":[]},"source":"<a href=\"http://twitter.com\" rel=\"nofollow\">Twitter Web Client</a>","in_reply_to_status_id":null,"in_reply_to_status_id_str":null,"in_reply_to_user_id":516722733,"in_reply_to_user_id_str":"516722733","in_reply_to_screen_name":"EbanxBR","geo":null,"coordinates":null,"place":null,"contributors":null,"is_quote_status":false,"retweet_count":0,"favorite_count":0,"favorited":false,"retweeted":false,"lang":"pt"},"contributors_enabled":false,"is_translator":false,"is_translation_enabled":false,"profile_background_color":"C0DEED","profile_background_image_url":"http://abs.twimg.com/images/themes/theme1/bg.png","profile_background_image_url_https":"https://abs.twimg.com/images/themes/theme1/bg.png","profile_background_tile":false,"profile_image_url":"http://abs.twimg.com/sticky/default_profile_images/default_profile_normal.png","profile_image_url_https":"https://abs.twimg.com/sticky/default_profile_images/default_profile_normal.png","profile_link_color":"1DA1F2","profile_sidebar_border_color":"C0DEED","profile_sidebar_fill_color":"DDEEF6","profile_text_color":"333333","profile_use_background_image":true,"has_extended_profile":false,"default_profile":true,"default_profile_image":true,"following":false,"follow_request_sent":false,"notifications":false,"translator_type":"none"};
 
-    if(req.session.user){
-  	res.cookie("user",JSON.stringify(req.session.user));
+ if(req.session.user){
+   res.cookie("user",JSON.stringify(req.session.user));
 
-    }
+ }
 
-    res.sendFile("/main.html",{root: __dirname});
+ res.sendFile("/main.html",{root: __dirname});
 });
 
 app.get('/logout', function (req, res) {
 	req.session.destroy();
 	res.clearCookie('user');
-    res.redirect("/");
+  res.redirect("/");
 });
 
 app.listen(port, function () {
@@ -77,39 +77,39 @@ app.post('/signin', function(req, res) {
 
 
 app.get("/request-token", function(req, res) {
-        twitter.getRequestToken(function(err, requestToken, requestSecret) {
-            if (err)
-                res.status(500).send(err);
-            else {
-                _requestSecret = requestSecret;         
-                res.redirect("https://api.twitter.com/oauth/authenticate?oauth_token=" + requestToken);
-            }
-        });
-    });
-  
-  
- app.get("/access-token", function(req, res) {
-        var requestToken = req.query.oauth_token,
-      verifier = req.query.oauth_verifier;
+  twitter.getRequestToken(function(err, requestToken, requestSecret) {
+    if (err)
+      res.status(500).send(err);
+    else {
+      _requestSecret = requestSecret;         
+      res.redirect("https://api.twitter.com/oauth/authenticate?oauth_token=" + requestToken);
+    }
+  });
+});
 
-        twitter.getAccessToken(requestToken, _requestSecret, verifier, function(err, accessToken, accessSecret) {
-            if (err)
-                res.status(500).send(err);
-            else
-                twitter.verifyCredentials(accessToken, accessSecret, function(err, user) {
-                    if (err)
-                        res.status(500).send(err);
-                    else{
-                        req.session.user = user; 
-                        res.redirect("https://pinterest-clone-imm.herokuapp.com/");
-                    }
-                });
-        });
-    });
+
+app.get("/access-token", function(req, res) {
+  var requestToken = req.query.oauth_token,
+  verifier = req.query.oauth_verifier;
+
+  twitter.getAccessToken(requestToken, _requestSecret, verifier, function(err, accessToken, accessSecret) {
+    if (err)
+      res.status(500).send(err);
+    else
+      twitter.verifyCredentials(accessToken, accessSecret, function(err, user) {
+        if (err)
+          res.status(500).send(err);
+        else{
+          req.session.user = user; 
+          res.redirect("https://pinterest-clone-imm.herokuapp.com/");
+        }
+      });
+  });
+});
 
 
 app.get("/photos",function(req,res){
-console.log(req.query.user);
+  console.log(req.query.user);
 
   db.collection("pinterest").find((req.query.user)?{user: req.query.user}:{}).sort({date: -1}).toArray(function(err, result) {
     if (err) throw err;
@@ -120,127 +120,127 @@ console.log(req.query.user);
 });
 
 app.get("/addpin",function(req,res){
-var resp=res;
+  var resp=res;
 
-	if(req.session.user){
-		
+  if(req.session.user){
+    
     console.log(new Date(Date.now()).toLocaleString());
-		requestImageSize({ url: req.query.url, "rejectUnauthorized": false, headers: { 'User-Agent': 'request-image-size' } })
-		.then(size => db.collection("pinterest").insertOne({user: req.session.user.screen_name, 
-		img: req.query.url,
-			likes: [],
-			size: ""+size.width+"x"+size.height, 
+    requestImageSize({ url: req.query.url, "rejectUnauthorized": false, headers: { 'User-Agent': 'request-image-size' } })
+    .then(size => db.collection("pinterest").insertOne({user: req.session.user.screen_name, 
+      img: req.query.url,
+      likes: [],
+      size: ""+size.width+"x"+size.height, 
       imguser: req.session.user.profile_image_url,
       date: new Date(Date.now()).toLocaleString()}, function(err, res) {
-				if (err) throw err;
+        if (err) throw err;
         res.ops[0].msg="ok";
-				resp.json(res.ops[0]);
+        resp.json(res.ops[0]);
         console.log(size);
         console.log(res.ops[0]);
-		})	
+      })	
 
     )
-		.catch(err => db.collection("pinterest").insertOne({user: req.session.user.screen_name, 
-		img: "placeholder.png",
-			likes: [],
-			size: "1000x1000", 
+    .catch(err => db.collection("pinterest").insertOne({user: req.session.user.screen_name, 
+      img: "placeholder.png",
+      likes: [],
+      size: "1000x1000", 
       imguser: req.session.user.profile_image_url,
       date: new Date(Date.now()).toLocaleString()}, function(err, res) {
-				if (err) throw err;
+        if (err) throw err;
         res.ops[0].msg="ok";
-				resp.json(res.ops[0]);
+        resp.json(res.ops[0]);
         console.log(res.ops[0]);
-		})	);
+      })	);
 
-		
-		
-	}else{
+    
+    
+  }else{
     resp.json({msg:"permission denied"});
-	
-	}
+    
+  }
 });
 
 app.get("/delete",function(req,res){
-var id=new ObjectId(req.query.id) || req.query.id;
-var resp=res;
+  var id=new ObjectId(req.query.id) || req.query.id;
+  var resp=res;
 
   if(req.session.user){
-  
-  db.collection("pinterest").findOne({_id: id}, function(err, doc) { 
- console.log(doc);
-    if(doc.user===req.session.user.screen_name){
-    db.collection("pinterest").deleteOne({_id:id}, function(err, obj) {
-    if (err) throw err;
-    console.log("1 document deleted");
+    
+    db.collection("pinterest").findOne({_id: id}, function(err, doc) { 
+     console.log(doc);
+     if(doc.user===req.session.user.screen_name){
+      db.collection("pinterest").deleteOne({_id:id}, function(err, obj) {
+        if (err) throw err;
+        console.log("1 document deleted");
 
-    db.collection("pinterest").find({}).sort({date: -1}).toArray(function(err, result) {
-    if (err) throw err;
+        db.collection("pinterest").find({}).sort({date: -1}).toArray(function(err, result) {
+          if (err) throw err;
     //result.likes=result.likes.length;
     console.log(result);
     resp.json(result);
   });
 
-    });
-  }else
-  resp.json({msg:"permission denied"});
+      });
+    }else
+    resp.json({msg:"permission denied"});
 
   });
     
     
   }else{
     resp.json({msg:"permission denied"});
-  
+    
   }
 
 });
 
 app.get("/like",function(req,res){
-var resp=res;
-var id=new ObjectId(req.query.id) || req.query.id;
+  var resp=res;
+  var id=new ObjectId(req.query.id) || req.query.id;
 
   if(req.session.user){
-  db.collection("pinterest").findOne({_id: id}, function(err, doc) {
-    if (err) throw err;
-    console.log(doc);
-	
-  if(doc){
-	if(doc.likes.length==0){
+    db.collection("pinterest").findOne({_id: id}, function(err, doc) {
+      if (err) throw err;
+      console.log(doc);
+      
+      if(doc){
+       if(doc.likes.length==0){
         console.log("adicionado");
         doc.likes.push({user: req.session.user.screen_name});
-        }else{
+      }else{
 
-    for(var i=0;i<doc.likes.length;i++){
-      console.log(doc.likes[i]);
-	  
-	  
-      if(doc.likes[i].user==req.session.user.screen_name){
-		doc.likes.splice(i,1);
-		  
-        console.log("tchau "+doc.likes.length);
-		
-        break;
+        for(var i=0;i<doc.likes.length;i++){
+          console.log(doc.likes[i]);
+          
+          
+          if(doc.likes[i].user==req.session.user.screen_name){
+            doc.likes.splice(i,1);
+            
+            console.log("tchau "+doc.likes.length);
+            
+            break;
+          }
+
+          if(i==doc.likes.length-1 || doc.likes.length==1){
+            console.log("oi");
+            doc.likes.push({user: req.session.user.screen_name});
+          }
         }
 
-        if(i==doc.likes.length-1 || doc.likes.length==1){
-          console.log("oi");
-        doc.likes.push({user: req.session.user.screen_name});
-        }
       }
+      
+      console.log(id);
+      
+      delete doc._id;
+      console.log(doc);
+      
+      db.collection("pinterest").updateOne({_id:id}, {$set: {likes:doc.likes}}, function(err, res) {
+       if (err) throw err;
+       console.log(res.result);
+       resp.json({likes: doc.likes.length});
+     });
 
-		}
-		
-		console.log(id);
-		
-		delete doc._id;
-		console.log(doc);
-		
-		db.collection("pinterest").updateOne({_id:id}, {$set: {likes:doc.likes}}, function(err, res) {
-			if (err) throw err;
-			console.log(res.result);
-			resp.json({likes: doc.likes.length});
-		});
-
-  }
+    }
   });
 
   }else{
