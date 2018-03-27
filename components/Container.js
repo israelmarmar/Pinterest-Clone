@@ -113,11 +113,7 @@ mypics(){
      <ul className="nav navbar-nav navbar-right">
      {(function(){
 
-      if(!user)
-        return(<div className="btn btn-default navbar-btn btnnav" onClick={th.submit} id="signup">Sign up</div>)
-          else
-            return(<li className="btn btn-default navbar-btn btnnav" onClick={th.logout} id="signup"><a href="#">Sign Out</a></li>)
-        })()}
+      
 
         {(function(){
 
@@ -140,6 +136,14 @@ mypics(){
             return(
           <li id="addpic" onClick={th.drop} className="btnnav"><a href="#">Add Pic▾</a></li>
           )
+
+
+        if(!user)
+        return(<div className="btn btn-default navbar-btn btnnav" onClick={th.submit} id="signup">Sign up</div>)
+          else
+            return(<li className="btn btn-default navbar-btn btnnav" onClick={th.logout} id="signup">Sign Out</li>)
+        })()}
+
         })()}
 
 
