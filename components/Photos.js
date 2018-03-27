@@ -1,6 +1,7 @@
 import React, {Component} from 'react'
 import axios from 'axios'
 import Blike from './Blike'
+import {serialize, getCookie} from "./jsfunc"
 import { connect } from 'react-redux'
 
 if(document.cookie && getCookie("user")!=="undefined"){
