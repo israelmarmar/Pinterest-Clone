@@ -177,18 +177,17 @@ class Photos extends Component{
     console.log(e.target.parentElement);
     var pin=e.target.parentElement;
     var th = this;
-    this.serverRequest = 
     axios.get("/delete?id="+e.target.id)
 
     .then(function(result) {
       if(result.data)
       {
+        console.log(result.data)
        th.props.dispatch({
         type: 'USER_LIST_SUCCESS',
         data: result.data
       });
-
-      msnry.layout();
+       th.props.callback()
     }
 
   });

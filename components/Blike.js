@@ -43,9 +43,8 @@ like(e){
 
   .then(function(result) {    
 
-
     if(result){
-      console.log("c");
+
       blik.classList.remove("disabled");
 
       th.setState({
@@ -62,6 +61,7 @@ like(e){
 }
 
 render(){
+  console.log(this.state.likes)
   return (
     <button onMouseOver={(event)=> this.over(event)} style={this.props.style} id={this.props.id} onClick={(event)=> this.like(event)} className={this.props.className}>{this.state.likes}</button>)
   }

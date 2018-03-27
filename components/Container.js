@@ -3,9 +3,8 @@ import Photos from "./Photos"
 import $ from "jquery"
 import axios from 'axios'
 import {serialize, getCookie} from "./jsfunc"
-import { createStore } from 'redux'
-import {pinReducer} from "./pinReducer"
-import { Provider } from 'react-redux'
+
+import { connect } from 'react-redux'
 
 if(document.cookie && getCookie("user")!=="undefined"){
   var user=JSON.parse(getCookie("user"));
@@ -14,10 +13,16 @@ if(document.cookie && getCookie("user")!=="undefined"){
 
 }
 
-console.log(pinReducer)
-const store = createStore(pinReducer);
 
-export default class Container extends Component{
+const mapStateToProps = function(store) {
+  console.log(store);
+  return {
+    data: store
+  };
+}
+
+
+class Container extends Component{
 
  submitform(ev){
 
@@ -43,11 +48,13 @@ export default class Container extends Component{
         indesc.value="";
         document.getElementById('drop').classList.remove("showdrop");
 
+        console.log(th)
+
         th.props.dispatch({
           type: 'ADD_USER',
           data: data
         });
-
+        th.props.callback()
         
       }
       
@@ -77,23 +84,21 @@ all(){
     data: result.data
   });
 
-  this.props.callback()
+  th.props.callback()
   
 })
 }
 
 mypics(){
-
+  var th = this;
   axios.get("/photos?user="+user.screen_name)
 
     .then(function(result) {    
       console.log(result.data);
-      store.dispatch({
+      th.props.dispatch({
         type: 'USER_LIST_SUCCESS',
         data: result.data
       });
-
-      console.log(store.getState());
       
     })
 
@@ -119,7 +124,7 @@ mypics(){
 
           if(user)
             return(
-          <li onClick={th.all} id="all" className="btnnav"><a href="#">All</a></li>
+          <li onClick={(event) =>th.all(event)} id="all" className="btnnav"><a href="#">All</a></li>
           )
         })()}
 
@@ -127,7 +132,7 @@ mypics(){
 
           if(user)
             return(
-          <li onClick={th.mypics} id="mypics" className="btnnav"><a href="#">My Pics</a></li>
+          <li onClick={(event) =>th.mypics(event)} id="mypics" className="btnnav"><a href="#">My Pics</a></li>
           )
         })()}
 
@@ -152,19 +157,17 @@ mypics(){
         </div>
 
         <div id="drop" className="dropdown-menu">
-        <form className="add-form" action="/addpin" method="GET" onSubmit={this.submitform}>
-        <input id="url" type="text" onClick={th.drop} name="url" placeholder="Pic url..." className="form-control" />
-        <input id="desc" type="text" onClick={th.drop} name="desc" placeholder="Pic description..." className="form-control" />
-        <button id="submit" onClick={th.drop} type="submit" className="btn btn-primary btn-block">Send</button>
+        <form className="add-form" action="/addpin" method="GET" onSubmit={(event) =>this.submitform(event)}>
+        <input id="url" type="text" onClick={(event) =>th.drop(event)} name="url" placeholder="Pic url..." className="form-control" />
+        <input id="desc" type="text" onClick={(event) =>th.drop(event)} name="desc" placeholder="Pic description..." className="form-control" />
+        <button id="submit" onClick={(event) =>th.drop(event)} type="submit" className="btn btn-primary btn-block">Send</button>
         </form>
         </div>
         </div>
         <div id="page" className="container">
 
 
-        <Provider store={store}>
         <Photos callback={this.props.callback}/>
-        </Provider>
 
         
         </div>
@@ -173,3 +176,4 @@ mypics(){
     }
   }
 
+export default connect(mapStateToProps)(Container);
