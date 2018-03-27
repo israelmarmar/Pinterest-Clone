@@ -6,8 +6,6 @@ import { createStore } from 'redux'
 import {pinReducer} from "./pinReducer"
 import { Provider } from 'react-redux'
 
-
-console.log(getCookie)
 if(document.cookie && getCookie("user")!=="undefined"){
   var user=JSON.parse(getCookie("user"));
   var username=user.name;
