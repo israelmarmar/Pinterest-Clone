@@ -111,7 +111,14 @@ mypics(){
      <img className="navbar-header" src="picasa_21755.png" width="50" height="50" />
 
      <ul className="nav navbar-nav navbar-right">
-     
+     {(function(){
+
+      if(!user)
+        return(<li className="btn btn-default navbar-btn btnnav" onClick={th.submit} id="signup">Sign up</li>)
+          else
+            return(<li className="btn btn-default navbar-btn btnnav" onClick={th.logout} id="signup"><Sign Out</li>)
+        })()}
+
         {(function(){
 
           if(user)
@@ -134,15 +141,6 @@ mypics(){
           <li id="addpic" onClick={th.drop} className="btnnav"><a href="#">Add Pic▾</a></li>
           )
         })()}
-
-        {(function(){
-
-      if(!user)
-        return(<div className="btn btn-default navbar-btn btnnav" onClick={th.submit} id="signup">Sign up</div>)
-          else
-            return(<li className="btn btn-default navbar-btn btnnav" onClick={th.logout} id="signup"><Sign Out</li>)
-        })()}
-
 
 
         </ul>
