@@ -1,6 +1,7 @@
 import React, {Component} from 'react'
 import Photos from "./Photos"
 import $ from "jquery"
+import axios from 'axios'
 import {serialize, getCookie} from "./jsfunc"
 import { createStore } from 'redux'
 import {pinReducer} from "./pinReducer"
@@ -66,7 +67,6 @@ drop(e){
 
 all(){
  var th = this;
- this.serverRequest = 
  axios.get("/photos")
 
  .then(function(result) {    
@@ -116,14 +116,14 @@ mypics(){
       if(!user)
         return(<div className="btn btn-default navbar-btn btnnav" onClick={th.submit} id="signup">Sign up</div>)
           else
-            return(<li className="btn btn-default navbar-btn btnnav" onClick={th.logout} id="signup">Sign Out</li>)
+            return(<li className="btn btn-default navbar-btn btnnav" onClick={th.logout} id="signup"><a href="#">Sign Out</a></li>)
         })()}
 
         {(function(){
 
           if(user)
             return(
-          <li onClick={th.all} id="all" className="btnnav">All</li>
+          <li onClick={th.all} id="all" className="btnnav"><a href="#">All</a></li>
           )
         })()}
 
@@ -131,14 +131,14 @@ mypics(){
 
           if(user)
             return(
-          <li onClick={th.mypics} id="mypics" className="btnnav">My Pics</li>
+          <li onClick={th.mypics} id="mypics" className="btnnav"><a href="#">My Pics</a></li>
           )
         })()}
 
         {(function(){
           if(user)
             return(
-          <li id="addpic" onClick={th.drop} className="btnnav">Add Pic▾</li>
+          <li id="addpic" onClick={th.drop} className="btnnav"><a href="#">Add Pic▾</a></li>
           )
         })()}
 

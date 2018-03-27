@@ -76,7 +76,9 @@ class Photos extends Component{
     }
 
     if(rem){
-      rem.classList.remove("hid");  
+      rem.classList.remove("hid"); 
+      rem.style.top=img.style.top
+      rem.style.left=img.style.left 
       rem.setAttribute("style", "top: 40px;left: 50px;")
     }
 
