@@ -13,8 +13,8 @@ var Twitter = require("node-twitter-api");
 var _requestSecret;
 
 var twitter = new Twitter({
-  consumerKey: "l0Q11C3VqtdLze9jQCHhQiX4V",
-  consumerSecret:"sdPtwLeAdlr3cR9WuPki6gCagFtBCuqx97fZn62dSktMf3yI7Z",
+  consumerKey: process.env.CONS_KEY,
+  consumerSecret:process.env.CONS_SECRET,
   callback: "https://pinterest-clone-imm.herokuapp.com/access-token"
 });
 
