@@ -22,6 +22,7 @@ export default class Container extends Component{
  submitform(ev){
 
   ev.preventDefault();
+  var th=this;
   var btn=ev.target.submit;
   var inurl=ev.target.url;
   var indesc=ev.target.desc;
@@ -42,7 +43,7 @@ export default class Container extends Component{
         indesc.value="";
         document.getElementById('drop').classList.remove("showdrop");
 
-        store.dispatch({
+        th.props.dispatch({
           type: 'ADD_USER',
           data: data
         });
@@ -71,12 +72,12 @@ all(){
 
  .then(function(result) {    
   console.log(result.data);
-  store.dispatch({
+  th.props.dispatch({
     type: 'USER_LIST_SUCCESS',
     data: result.data
   });
 
-  console.log(store.getState());
+  this.props.callback()
   
 })
 }
